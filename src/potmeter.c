@@ -3,7 +3,7 @@
 #include "stm32f30x_conf.h"
 #include "30010_io.h"
 
-void initPot(){
+void initPots(){
 RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
 
   // Potentiometer 0
@@ -15,10 +15,10 @@ RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
 
   // Potentiometer 1
   // Set pin PA1 to input
-//  GPIOA->MODER &= ~(0x00000003 << (1 * 2)); // Clear mode register
-//  GPIOA->MODER |=  (0x00000000 << (1 * 2)); // Set mode register (0x00 - Input,0x01 - Output, 0x02 - Alternate Function, 0x03 - Analog in/out)
-//  GPIOA->PUPDR &= ~(0x00000003 << (1 * 2)); // Clear push/pull register
-//  GPIOA->PUPDR |=  (0x00000002 << (1 * 2)); // Set push/pull register (0x00 - No pull, 0x01 - Pull-up, 0x02 - Pull-down)
+  GPIOA->MODER &= ~(0x00000003 << (1 * 2)); // Clear mode register
+  GPIOA->MODER |=  (0x00000000 << (1 * 2)); // Set mode register (0x00 - Input,0x01 - Output, 0x02 - Alternate Function, 0x03 - Analog in/out)
+  GPIOA->PUPDR &= ~(0x00000003 << (1 * 2)); // Clear push/pull register
+  GPIOA->PUPDR |=  (0x00000002 << (1 * 2)); // Set push/pull register (0x00 - No pull, 0x01 - Pull-up, 0x02 - Pull-down)
 
 
   RCC->CFGR2  &= ~RCC_CFGR2_ADCPRE12;       // Clear ADC12 prescaler bits
@@ -40,12 +40,21 @@ RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
   while(!(ADC1->ISR & 0x00000001)); // Wait until ready
 }
 
-void readPot(uint16_t * val_p){
+uint16_t readPot0(uint16_t * val_p){
   ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_1Cycles5);
-  ADC_StartConversion(ADC1); //Start ACD read
+  ADC_StartConversion(ADC1); //Start ADC read
   while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == 0){
 
   } //Wait for ADC read
-  *val_p = ADC_GetConversionValue(ADC1); //Read conversion value
+  return ADC_GetConversionValue(ADC1); //Return conversion value
+}
+
+uint16_t readPot1(){
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_1Cycles5);
+    ADC_StartConversion(ADC1); //Start ADC read
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == 0){
+
+    } //Wait for ADC read
+    return ADC_GetConversionValue(ADC1); //Return conversion value
 }
 

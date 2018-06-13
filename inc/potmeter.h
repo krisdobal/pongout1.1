@@ -1,10 +1,8 @@
-
 #ifndef _potmeter_H_
 #define _potmeter_H_
 
-void initPot();
-void readPot(uint16_t * val_p);
-
+void initPots();
+uint16_t readPot0();
+uint16_t readPot1();
 
 #endif /* _potmeter_H_ */
-

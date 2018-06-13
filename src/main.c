@@ -28,14 +28,17 @@
 #include "levels.h"
 
 
-void loadLevel(int * levelSelect, uint32_t * currentLevel){
-
+void loadLevel(int * levelSelect, uint32_t * bricks_p){
+    int i;
     switch(* levelSelect){
         case 1 :
-            currentLevel = level1;
+            bricks_p = level1;
             break;
         default :
-            currentLevel = defaultLevel;
+            for(i=0;i<8;i++){
+                bricks_p[i] = defaultLevel[i];
+            }
+
     }
 }
 
@@ -45,9 +48,10 @@ int main(void)
     // is initialized in Main
     init_usb_uart(115200);
     startTimer1(100);
+    initPots();
     initializeJoystick();
     //initializeLed();
-    initPot();
+
     init_spi_lcd();
 
 
@@ -66,10 +70,15 @@ int main(void)
 
     // striker initial position
     loadLevel(0, bricks);//0: default
+    updateStrikers(&striker0, &striker1);
+
+    newBall(&balls[0],&activeBalls,&striker0);
     //Initiate ball 1
 
-    // Rendering initial positions
 
+    // Rendering initial posittions
+    hideCursor();
+    renderGame(balls, bricks, striker0, striker1);
 
     while(1)
     {
@@ -81,12 +90,12 @@ int main(void)
             t1.flag = 0;
         }
 
-        if(physicsCount > 60){//10000-speed*10){
+        if(physicsCount > 10){//10000-speed*10){s
             updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
             physicsCount = 0;
         }
 
-        if(renderCount > 30){//10000){
+        if(renderCount > 20){//10000){
             renderGame(balls, bricks, striker0, striker1);
             //updateRender();
             renderCount = 0;

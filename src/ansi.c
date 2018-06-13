@@ -246,8 +246,8 @@ void window(frame_t * frame_p, int style, char * title_p) {
 // takes pointer to ball_struct and renders it according to the postion.
 void renderBall(ball_t * ball_p) {
     //Rounds an 18.14 fixed point number down.
-    int rendX = ball_p->xpos >> 14;
-    int rendY = ball_p->ypos >> 14;
+    int rendX = (ball_p->xpos) >> 14;
+    int rendY = (ball_p->ypos) >> 14;
 
     gotoxy(rendX, rendY);
     printf("o");
@@ -260,7 +260,7 @@ void renderBricks(uint32_t * bricks){
     for(i=0; i<8;i++){
         //Single lines
         for(j=0; j<4; j++){
-            gotoxy(33,(i*8)+j);
+            gotoxy(33,(i*4)+j);//*8)+j);
             //Single block slices
             for(int k=0; k<32; k++){
                 if(bricks[i] & 0x00000001<<k){
