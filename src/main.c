@@ -41,7 +41,7 @@ void loadLevel(int * levelSelect, uint32_t * bricks_p){
 
     }
 }
-
+//hej
 int main(void)
 {
     //Initializing hardware setup
