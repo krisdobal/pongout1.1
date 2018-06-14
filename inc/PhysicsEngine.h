@@ -24,7 +24,7 @@ typedef struct {
     uint32_t v; // magnitude of velocity
 
     uint8_t lastStriker; // the first bit indicates the striker that last hit the ball
-    int angle;
+    uint16_t angle;
 } ball_t;
 
 //Frame struct containing coordinates of upper left and bottom right corner.

@@ -108,7 +108,7 @@ int32_t expand(int32_t i) {
     return i << 2;
 }
 
-uint32_t fix14sin(uint8_t a) {
+uint32_t fix14sin(uint16_t a) {
 // 360° = 512
     a %= 512;
     uint32_t b = SIN[a];
