@@ -64,7 +64,8 @@ int main(void)
     uint8_t activeBalls = 0x00;
     ball_t balls[8];
     uint32_t bricks[8];
-    uint8_t speed = 1;
+    //TODO implement speed
+    uint8_t speed = 1; // This is the speed of the physics update the higher the longer the ball travels between render updates
     uint16_t score = 0x0000;
     uint8_t lives = 0x33;
     int renderCount = 0;
@@ -92,12 +93,12 @@ int main(void)
             t1.flag = 0;
         }
 
-        if(physicsCount > 20){//10000-speed*10){s
+        if(physicsCount > 1){//10000-speed*10){s
             updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
             physicsCount = 0;
         }
 
-        if(renderCount > 20){//10000){
+        if(renderCount > 32){//10000){
             renderGame(balls, bricks, striker0, striker1);
             //updateRender();
             renderCount = 0;

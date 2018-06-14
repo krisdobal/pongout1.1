@@ -98,8 +98,8 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
-            ball_p->xv = fix14cos(ball_p->angle);    //FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
-            ball_p->yv = fix14sin(ball_p->angle);   //FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
+            ball_p->xv = fix14cos(ball_p->angle)>>5;// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
+            ball_p->yv = fix14sin(ball_p->angle)>>5;// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
             ball_p->lastStriker = 0x00;
             /*
             free(&nextX);
@@ -166,6 +166,8 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // TODO:
     // Special bricks not implemented
+    // Score updating not implemented
+    // Placeholder for level-info (bricks).
 
    /* About bit-shiting in this function:
     *   >>14 - Conversion from 18:14 to int.
@@ -245,6 +247,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     if(oldy>>16 != nexty>>16){
 
         //Calculate brick index values
+
         uint32_t decoded_x = 0x00000001<<((nextx-(31<<14))>>15);
 
         uint8_t iy = nexty>>16;
@@ -282,9 +285,9 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
     ball_p->xpos = 12 <<14; // 9 <<14;
     ball_p->ypos = 7 << 14; // *striker0_p + (3<<14);
     ball_p->angle = 300;
-    ball_p->v = 1 << 14;
-    ball_p->xv = fix14cos(ball_p->angle); // TODO Make as function of SIN();
-    ball_p->yv = fix14sin(ball_p->angle);
+    ball_p->v = 1 << 0; // Going really slow!
+    ball_p->xv = fix14cos(ball_p->angle) >> 5; // TODO Make as function of SIN();
+    ball_p->yv = fix14sin(ball_p->angle) >> 5;
     ball_p->lastStriker = 2;//0;
 
 
