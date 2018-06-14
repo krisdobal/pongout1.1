@@ -231,15 +231,14 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // X
 
-    // Are we crossing a whole-numbered coordinate?
-    if(oldx>>15 != nextx>>15){
+    // Are we crossing even<->uneven?
+    if(oldx>>14 != nextx>>14 && oldx>>15 = nextx>>15){
 
         //Calculate brick index values
         uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
         uint8_t iy = oldy>>16;
 
         // Is the brick we're "hitting" there?
-        //currentLevel is a placeholder for the level (brick) data!!!!
         if(bricks[iy] & decoded_x){
             if(ball_p->xv > 0) {
                 // Hitting left edge of brick:
@@ -250,7 +249,8 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
             }
             //Flip the bit
             bricks[iy] ^= decoded_x;
-            // update the score of the hitting player
+            
+	    	// update the score of the hitting player
             if(ball_p->lastStriker){
                 * score += 0x10;
             }else{
@@ -265,6 +265,8 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     int nexty = oldy+ball_p->yv;
 
     // Y
+
+    // Are we crossing a multiple of 8?
     if(oldy>>16 != nexty>>16){
 
         //Calculate brick index values
@@ -276,14 +278,15 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
         if(bricks[iy] & decoded_x){
             if(ball_p->yv > 0) {
                 // Hitting top of brick:
-                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
             }else{
                 // Hitting bottom of brick:
-                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
             }
             //Flip the bit
             bricks[iy] ^= decoded_x;
-            // update the score of the hitting player
+            
+			// update the score of the hitting player
             if(ball_p->lastStriker){
                 * score += 0x10;
             }else{
