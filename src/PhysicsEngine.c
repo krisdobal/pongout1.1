@@ -207,7 +207,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     // X
 
     // Are we crossing even<->uneven?
-    if(oldx>>14 != nextx>>14 && oldx>>15 = nextx>>15){
+    if(oldx>>14 != nextx>>14 && oldx>>15 == nextx>>15){
 
         //Calculate brick index values
         uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
