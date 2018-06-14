@@ -179,7 +179,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // Are we even near the bricks?
     if(ball_p->xpos>>14 > 96) return 0;
-    if(ball_p->xpos>>14 < 32) return 0;
+    if(ball_p->xpos>>14 < 30) return 0;
 
     // Remembering old positions for double-bouncing.
     // Without these, a ball might end up inside a brick.
@@ -187,7 +187,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     int oldy = ball_p->ypos;
 
     //Helper value
-     int nextx = oldx+ball_p->xv;
+    int nextx = oldx+ball_p->xv;
     int nexty = oldy+ball_p->yv;
 
     // Return value.
@@ -213,7 +213,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     if(oldx>>14 != nextx>>14 && oldx>>15 == nextx>>15){
 
         //Calculate brick index values
-        uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
+        uint32_t decoded_x = 0x00000001<<((nextx-(31<<14))>>15);
         uint8_t iy = nexty>>16;
 
         // Is the brick we're "hitting" there?
@@ -245,7 +245,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     if(oldy>>16 != nexty>>16){
 
         //Calculate brick index values
-        uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
+        uint32_t decoded_x = 0x00000001<<((nextx-(31<<14))>>15);
 
         uint8_t iy = nexty>>16;
 

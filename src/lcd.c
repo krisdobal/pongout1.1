@@ -25,8 +25,8 @@ renderBricks(uint32_t * bricks, uint8_t * buffer){
             if(bricks[(i<<1)]   & (0x00000001<<j)) brickData += 0x0F;
             if(bricks[(i<<1)+1] & (0x00000001<<j)) brickData += 0xF0;
 
-            buffer[(i<<8)+33+(j<<1)] = brickData;
-            buffer[(i<<8)+33+(j<<1)+1] = brickData;
+            buffer[(i<<8)+31+(j<<1)]   = brickData;
+            buffer[(i<<8)+31+(j<<1)+1] = brickData;
         }
     }
     //MATH EXPLANATION:

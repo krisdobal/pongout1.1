@@ -260,7 +260,7 @@ void renderBricks(uint32_t * bricks){
     for(i=0; i<8;i++){
         //Single lines
         for(j=0; j<4; j++){
-            gotoxy(33,(i*4)+j);//*8)+j);
+            gotoxy(31,(i*4)+j);//*8)+j);
             //Single block slices
             for(int k=0; k<32; k++){
                 if(bricks[i] & 0x00000001<<k){
