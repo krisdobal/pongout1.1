@@ -27,6 +27,9 @@
 
 #include "levels.h"
 
+//#include "charset.h"
+#include <string.h>
+#include "lcd.h"
 
 void loadLevel(int * levelSelect, uint32_t * bricks_p){
     int i;
@@ -70,6 +73,9 @@ int main(void)
     uint8_t lives = 0x33;
     int renderCount = 0;
     int physicsCount = 0;
+    uint8_t buffer[512];
+
+   	//lcd_push_buffer(buffer);
 
     // striker initial position
     loadLevel(0, bricks);//0: default
@@ -82,6 +88,9 @@ int main(void)
     // Rendering initial posittions
     hideCursor();
     renderGame(balls, bricks, striker0, striker1);
+    lcdCleanScreen(buffer);
+   // memset(buffer,0xAA,512);
+    //lcd_push_buffer(buffer);
 
     while(1)
     {
@@ -93,13 +102,16 @@ int main(void)
             t1.flag = 0;
         }
 
-        if(physicsCount > 1){//10000-speed*10){s
+        if(physicsCount > 20){//10000-speed*10){s
             updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
             physicsCount = 0;
         }
 
-        if(renderCount > 32){//10000){
+        if(renderCount > 20){//10000){
             renderGame(balls, bricks, striker0, striker1);
+            lcdCleanScreen(buffer);
+            lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer);
+            //lcd_push_buffer(buffer);
             //updateRender();
             renderCount = 0;
         }

@@ -14,5 +14,7 @@
 
 // === LUT DECLARATIONS ===
 const signed short SIN[512];
+uint32_t fix14sin(uint16_t a);
+uint32_t fix14cos(uint16_t a);
 
 #endif	// LOOKUP_H

@@ -34,7 +34,6 @@ void bgcolor(int background) {
                 the colors are initially like that, but when the background color is first changed there is no
  	              way comming back.
    Hint:        Use resetbgcolor(); clrscr(); to force HyperTerminal into gray text on black background.
-
     Value      Color
     ------------------
       0        Black

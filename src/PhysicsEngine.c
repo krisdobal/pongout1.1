@@ -1,6 +1,8 @@
 //.c file for all internal 'physics' functions and structs in the program
 #include "PhysicsEngine.h"
 #include "stm32f30x_conf.h"
+#include "lookup.h"
+#include "potmeter.h"
 
 // Uses 18.14 fixed-point integers
 
@@ -98,8 +100,8 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
-            ball_p->xv = fix14cos(ball_p->angle)>>5;// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
-            ball_p->yv = fix14sin(ball_p->angle)>>5;// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
+            ball_p->xv = fix14cos(ball_p->angle);// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
+            ball_p->yv = fix14sin(ball_p->angle);// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
             ball_p->lastStriker = 0x00;
             /*
             free(&nextX);
@@ -127,7 +129,7 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
 	    //update position of the ball. xv will be overwritten later
             reflect(&ball_p->xpos, 119 << 14, &ball_p->xv);
 	    ball_p->ypos = nextY;
-		
+
             //check where it hits and adjust angle accordingly.
             if (nextY < *striker1_p + (1 << 14)) {
                 ball_p->angle = (ball_p->angle + (((512 + 383 - ball_p->angle)%512)/2))%512;
@@ -143,8 +145,8 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
                 ball_p->angle = (512 + ball_p->angle - (((512 + ball_p->angle - 128)%512)/4))%512;
             }
             //adjust velocity vector according to new angle.
-            ball_p->xv = fix14cos(ball_p->angle);
-            ball_p->yv = fix14sin(ball_p->angle);
+            ball_p->xv = (fix14cos(ball_p->angle));
+            ball_p->yv = (fix14sin(ball_p->angle));
 
             ball_p->lastStriker = 0x01;
             /*
@@ -286,8 +288,8 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
     ball_p->ypos = 7 << 14; // *striker0_p + (3<<14);
     ball_p->angle = 300;
     ball_p->v = 1 << 0; // Going really slow!
-    ball_p->xv = fix14cos(ball_p->angle) >> 5; // TODO Make as function of SIN();
-    ball_p->yv = fix14sin(ball_p->angle) >> 5;
+    ball_p->xv = (fix14cos(ball_p->angle));// >> 5); // TODO Make as function of SIN();
+    ball_p->yv = (fix14sin(ball_p->angle));// >> 5);
     ball_p->lastStriker = 2;//0;
 
 
