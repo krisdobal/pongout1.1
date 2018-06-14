@@ -58,43 +58,12 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0, uint32_t * strike
         //check if the ball hits the striker.
         if (nextY >= (* striker0) && nextY < (* striker0) + (6 << 14)) {
 
-            // Deduce normal reflect angle from last striker hit
-            // if/else structure needs to be compressed
-/*            if(!ball_p->lastStriker){
-                if (ball_p->yv > 0){
-                    if (ball_p->angle < 128){
-                        ball_p->angle = 511 - ball_p->angle;
-                    }
-                }
-                else {
-                    if (ball_p->angle > 127){
-                        ball_p->angle = 511 - ball_p->angle;
-                }
-            }
-            else {
-                if (ball_p->yv > 0){
-                    if (ball_p->angle < 128){
-                        ball_p->angle = -ball_p->angle;
-                    }
-                    else {
-                        ball_p->angle = 640 - ball_p->angle;
-                    }
-                }
-                else {
-                    if (ball_p->angle < 128){
-                        ball_p->angle = 128 - ball_p->angle;
-                    }
-                    else {
-                        ball_p->angle = - ball_p->angle; //adding a full revolution to avoid negative angles
-                    }
-                }
-            }
-*/
-
+            //Turns the angle of collision if the balls angle was determined by the other striker
             if (ball_p->lastStriker) {
                 ball_p->angle += 256;
             }
-            if (XOR2(ball_p -> angle > 127 && ball_p -> angle < 512, ball_p->yv > 0)){
+            // reflects angle in the x-axis if previous yv and new yv have different signs
+            if (XOR2(ball_p->angle < 256, ball_p->yv > 0)){
                 ball_p->angle = 512 - ball_p->angle;
             }
 
@@ -106,24 +75,30 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0, uint32_t * strike
                 ball_p->angle += 128;
             }
 */
+            // determins new xpos and ypos - xv will be overwritten later
             reflect(&ball_p->xpos, 9 << 14, &ball_p->xv);
+            ball_p->ypos = nextY;
+
             //check where it hits and adjust angle accordingly.
+
             if (nextY < (* striker0) + (1 << 14)){
-                ball_p->angle += (127 - ball_p->angle) >> 1;
+                ball_p->angle = (ball_p->angle -(((ball_p->angle - 384)%512) /2))%512;
+ //               ball_p->angle += ((128 - ball_p->angle) >> 1);
             }
             else if (nextY < (* striker0) + (2 << 14)){
-                ball_p->angle += (127 - ball_p->angle) >> 2;
+                ball_p->angle -= (((ball_p->angle - 384)%512) >> 2);
+//                ball_p->angle += (127 - ball_p->angle) >> 2;
             }
             else if (nextY < (* striker0) + (4 << 14)){}
             else if (nextY < (* striker0) + (5 << 14)){
-                ball_p->angle -= (ball_p->angle - 383) >> 2;
+                ball_p->angle += ((128 - ball_p->angle) >> 2);
             }
-            else if (nextY >= (* striker0) + (5 << 14) && nextY < * striker0 + (6 << 14)) {
-                ball_p->angle -= (ball_p->angle - 383) >> 1;
+            else { // if (nextY >= (* striker0) + (5 << 14) && nextY < * striker0 + (6 << 14)) {
+                ball_p->angle += ((128 - ball_p->angle) >> 1);
             }
             //adjust velocity vector according to new angle.
-            uint32_t fixcos = fix14cos(ball_p->angle);
-            ball_p->xv = FIX14MULT(ball_p->v, fixcos);
+            // uint32_t fixcos = fix14cos(ball_p->angle);
+            ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
             ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
             ball_p->lastStriker = 0x00;
             /*
@@ -231,14 +206,15 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // X
 
-    // Are we crossing even<->uneven?
-    if(oldx>>14 != nextx>>14 && oldx>>15 = nextx>>15){
+    // Are we crossing a whole-numbered coordinate?
+    if(oldx>>15 != nextx>>15){
 
         //Calculate brick index values
         uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
         uint8_t iy = oldy>>16;
 
         // Is the brick we're "hitting" there?
+        //currentLevel is a placeholder for the level (brick) data!!!!
         if(bricks[iy] & decoded_x){
             if(ball_p->xv > 0) {
                 // Hitting left edge of brick:
@@ -249,8 +225,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
             }
             //Flip the bit
             bricks[iy] ^= decoded_x;
-            
-	    	// update the score of the hitting player
+            // update the score of the hitting player
             if(ball_p->lastStriker){
                 * score += 0x10;
             }else{
@@ -265,8 +240,6 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
     int nexty = oldy+ball_p->yv;
 
     // Y
-
-    // Are we crossing a multiple of 8?
     if(oldy>>16 != nexty>>16){
 
         //Calculate brick index values
@@ -278,15 +251,14 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
         if(bricks[iy] & decoded_x){
             if(ball_p->yv > 0) {
                 // Hitting top of brick:
-                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
             }else{
                 // Hitting bottom of brick:
-                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
             }
             //Flip the bit
             bricks[iy] ^= decoded_x;
-            
-			// update the score of the hitting player
+            // update the score of the hitting player
             if(ball_p->lastStriker){
                 * score += 0x10;
             }else{
@@ -305,13 +277,14 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
     // Always spawns ball 0
 
     //Coords in 18:14
-    ball_p->xpos = 9<<14;
-    ball_p->ypos = *striker0_p + (3<<14);
-    ball_p->xv = 1 << 13; // TODO Make as function of SIN();
-    ball_p->yv = 0 << 13;
-    ball_p->v = 1 << 13;
+    ball_p->xpos = 12 <<14; // 9 <<14;
+    ball_p->ypos = 7 << 14; // *striker0_p + (3<<14);
+    ball_p->angle = 300;
+    ball_p->v = 1 << 14;
+    ball_p->xv = fix14cos(ball_p->angle); // TODO Make as function of SIN();
+    ball_p->yv = fix14sin(ball_p->angle);
     ball_p->lastStriker = 0;
-    ball_p->angle = 0;
+
 
     //Activate ball 0
     * activeBalls |= 0x01;

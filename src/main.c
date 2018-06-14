@@ -41,7 +41,7 @@ void loadLevel(int * levelSelect, uint32_t * bricks_p){
 
     }
 }
-//hej
+
 int main(void)
 {
     //Initializing hardware setup
@@ -90,12 +90,12 @@ int main(void)
             t1.flag = 0;
         }
 
-        if(physicsCount > 10){//10000-speed*10){s
+        if(physicsCount > 7){//10000-speed*10){s
             updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
             physicsCount = 0;
         }
 
-        if(renderCount > 20){//10000){
+        if(renderCount > 21){//10000){
             renderGame(balls, bricks, striker0, striker1);
             //updateRender();
             renderCount = 0;
