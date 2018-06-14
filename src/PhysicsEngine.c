@@ -206,8 +206,8 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // X
 
-    // Are we crossing a whole-numbered coordinate?
-    if(oldx>>15 != nextx>>15){
+    // Are we crossing even<->uneven?
+    if(oldx>>14 != nextx>>14 && oldx>>15 = nextx>>15){
 
         //Calculate brick index values
         uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
@@ -247,14 +247,13 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
         uint8_t iy = nexty>>16;
 
         // Is the brick we're "hitting" there?
-        //currentLevel is a placeholder for the level (brick) data!!!!
         if(bricks[iy] & decoded_x){
             if(ball_p->yv > 0) {
                 // Hitting top of brick:
-                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
             }else{
                 // Hitting bottom of brick:
-                reflect(&ball_p->ypos, (nexty>>14)<<14, &ball_p->yv);
+                reflect(&ball_p->ypos, (oldy>>14)<<14, &ball_p->yv);
             }
             //Flip the bit
             bricks[iy] ^= decoded_x;
