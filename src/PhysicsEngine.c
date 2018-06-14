@@ -162,8 +162,6 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
     // TODO:
     // Special bricks not implemented
-    // Score updating not implemented
-    // Placeholder for level-info (bricks).
 
    /* About bit-shiting in this function:
     *   >>14 - Conversion from 18:14 to int.
@@ -244,6 +242,7 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 
         //Calculate brick index values
         uint32_t decoded_x = 0x00000001<<((nextx-(33<<14))>>15);
+
         uint8_t iy = nexty>>16;
 
         // Is the brick we're "hitting" there?
