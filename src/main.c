@@ -32,7 +32,9 @@ void loadLevel(int * levelSelect, uint32_t * bricks_p){
     int i;
     switch(* levelSelect){
         case 1 :
-            bricks_p = level1;
+            for(i=0;i<8;i++){
+                bricks_p[i] = level1[i];
+            }
             break;
         default :
             for(i=0;i<8;i++){
