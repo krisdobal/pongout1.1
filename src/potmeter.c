@@ -40,7 +40,7 @@ RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
   while(!(ADC1->ISR & 0x00000001)); // Wait until ready
 }
 
-uint16_t readPot0(uint16_t * val_p){
+uint16_t readPot0(){
   ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_1Cycles5);
   ADC_StartConversion(ADC1); //Start ADC read
   while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == 0){
