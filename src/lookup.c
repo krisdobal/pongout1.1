@@ -112,13 +112,13 @@ uint32_t fix14sin(uint16_t a) {
 // 360° = 512
     a %= 512;
     uint32_t b = SIN[a];
-    if((SIN[a] & 0x8000) !=0){
-        b += 0xFFFF0000;
-    }
+//    if((SIN[a] & 0x8000) !=0){
+//        b += 0xFFFF0000;
+//    }
     return b;
 }
 
-uint32_t fix14cos(uint8_t a) {
+uint32_t fix14cos(uint16_t a) {
 //cos(a) = sin(a + 90°)
     a += 128;
     return fix14sin(a);
