@@ -287,6 +287,21 @@ void renderStrikers(int striker0, int striker1){
     }
 }
 
+void bufferToAnsi(uint8_t * buffer_p){
+    uint8_t c = 0xDB; //Filled square char.
+    uint8_t * line[128]; 
+
+    int i, j;
+    for(i = 0; i<32; i++){
+        memset(line, 0x00, 128);
+        for(j = 0; j<128; j++){
+            if(buffer_p[j + (i>>3)]) line[j]=c;
+        }
+        gotoxy(0,i);
+        printf("%s",line);
+    }
+}
+
 // Renders PongOut game
 void renderGame(ball_t * ball_p, uint32_t * bricks, int striker0, int striker1){
     clrscr();
