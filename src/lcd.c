@@ -11,6 +11,14 @@ void lcdRenderChar(int slice, uint8_t line, uint8_t c, uint8_t * buffer_p){//cha
     }
 }
 
+void lcdRenderString(int slice, uint8_t line, uint8_t * string_p, uint8_t * buffer_p){
+    int i = 0;
+    while(slice<(128-5)){
+        lcdRenderChar(slice, line, string_p[i], buffer_p);
+        slice += 5;
+    }
+}
+
 void lcdCleanScreen(uint8_t * buffer_p){
     memset(buffer_p, 0x00, 512);
     /*
