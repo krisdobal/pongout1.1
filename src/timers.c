@@ -23,7 +23,7 @@ void startTimer1(int f) { // Initiation and starting the timer,  f - Frequency
     TIM2->ARR = reloadValue; // Set reload value
     TIM2->PSC = 0x00; // Set prescale value
     TIM2->DIER |= 0x0001; // Enable timer 2 interrupts
-    NVIC_SetPriority(TIM2_IRQn, 1); // Set interrupt priority
+    NVIC_SetPriority(TIM2_IRQn, 2); // Set interrupt priority
     NVIC_EnableIRQ(TIM2_IRQn); // Enable interrupt
 }
 

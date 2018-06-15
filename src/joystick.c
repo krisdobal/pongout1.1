@@ -55,6 +55,9 @@ void initializeJoystick(){
 }
 
 uint8_t readJoystick(){
+    /*
+    Bit 0:
+    */
     uint8_t output = 0x00;
     //viderefører registrene til program variabler
     uint16_t Aval = GPIOA->IDR & (0x0010);
