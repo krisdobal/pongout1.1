@@ -3,6 +3,7 @@
 #include "stm32f30x_conf.h"
 #include "PhysicsEngine.h"
 #include "30010_io.h"
+#include <string.h>
 
 void lcdRenderChar(int slice, uint8_t line, uint8_t c, uint8_t * buffer_p){//char c, uint8_t * buffer_p){
     for(int i=0; i<5; i++){
@@ -69,7 +70,7 @@ void renderDecorations(uint8_t * buffer_p){
 
     //Lives (example values)
     lcdRenderChar(1,3,0x6D, buffer_p);
-    lcdRenderChar(122,3,0x6C, buffer_p);
+    lcdRenderChar(122,3,0x6B, buffer_p);
 
     //Scores (blank values)
     lcdRenderChar(1,0,0x5F,buffer_p);

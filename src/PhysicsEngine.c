@@ -100,8 +100,8 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
-            ball_p->xv = fix14cos(ball_p->angle);// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14cos(ball_p->angle));
-            ball_p->yv = fix14sin(ball_p->angle);// reduced vector to 1/2^5   //FIX14MULT(ball_p->v, fix14sin(ball_p->angle));
+            ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
+            ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
             ball_p->lastStriker = 0x00;
             /*
             free(&nextX);
@@ -146,8 +146,8 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
                 ball_p->angle = (512 + ball_p->angle - (((512 + ball_p->angle - 128)%512)/4))%512;
             }
             //adjust velocity vector according to new angle.
-            ball_p->xv = (fix14cos(ball_p->angle));
-            ball_p->yv = (fix14sin(ball_p->angle));
+            ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
+            ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 
             ball_p->lastStriker = 0x01;
             /*
@@ -285,12 +285,13 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
     // Always spawns ball 0
 
     //Coords in 18:14
-    ball_p->xpos = 12 <<14; // 9 <<14;
-    ball_p->ypos = 7 << 14; // *striker0_p + (3<<14);
-    ball_p->angle = 300;
-    ball_p->v = 1 << 0; // Going really slow!
-    ball_p->xv = (fix14cos(ball_p->angle));// >> 5); // TODO Make as function of SIN();
-    ball_p->yv = (fix14sin(ball_p->angle));// >> 5);
+    ball_p->xpos = 20 <<14; // 9 <<14;
+    ball_p->ypos = 16 << 14; // *striker0_p + (3<<14);
+    ball_p->angle = 257;
+    ball_p->v = 1 << 10;
+    ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
+    ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
+
     ball_p->lastStriker = 2;//0;
 
 
@@ -301,8 +302,8 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
 
 void updateStrikers(uint32_t * striker0_p, uint32_t * striker1_p) {
 	//transform potmetervalue to coordinate range of strikers
-	*striker0_p = (1 << 14) + (readPot0()*(24 << 14))/4096;
-	*striker1_p = (1 << 14) + (readPot1()*(24 << 14))/4096;
+	*striker0_p = (1 << 14) + (readPot0()*(24 << 14))/4070;
+	*striker1_p = (1 << 14) + (readPot1()*(24 << 14))/4070;
 }
 
 
