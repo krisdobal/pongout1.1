@@ -11,10 +11,13 @@ void lcdRenderChar(int slice, uint8_t line, char c, uint8_t * buffer_p){
 }
 
 void lcdCleanScreen(uint8_t * buffer_p){
+    memset(buffer_p, 0x00, 512);
+    /*
     int i;
     for(i=0; i<512;i++){
         *(buffer_p + i) = 0x00;
     }
+    */
     lcd_push_buffer(buffer_p);
 }
 
