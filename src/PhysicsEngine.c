@@ -234,9 +234,9 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
             bricks[iy] ^= decoded_x;
             // update the score of the hitting player
             if(ball_p->lastStriker){
-                * score += 0x10;
+                * score += 0x0100;
             }else{
-                * score += 0x01;
+                * score += 0x0001;
             }
             retval = 1;
         }
@@ -268,9 +268,9 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
             bricks[iy] ^= decoded_x;
             // update the score of the hitting player
             if(ball_p->lastStriker){
-                * score += 0x10;
+                * score += 0x0100;
             }else{
-                * score += 0x01;
+                * score += 0x0001;
             }
             retval = 1;
         }
@@ -288,7 +288,7 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
     ball_p->xpos = 20 <<14; // 9 <<14;
     ball_p->ypos = 16 << 14; // *striker0_p + (3<<14);
     ball_p->angle = 257;
-    ball_p->v = 1 << 10;
+    ball_p->v = 1 << 12;
     ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
     ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 

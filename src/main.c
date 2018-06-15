@@ -68,7 +68,7 @@ int main(void)
     ball_t balls[8];
     uint32_t bricks[8];
     //TODO implement speed
-    uint8_t speed = 1; // This is the speed of the physics update the higher the longer the ball travels between render updates
+    uint8_t speed = 3; // value from upper main from 0, to 3 where 3 is fastest
     uint16_t score = 0x0000;
     uint8_t lives = 0x33;
     int renderCount = 0;
@@ -87,9 +87,9 @@ int main(void)
 
     // Rendering initial posittions
     hideCursor();
-    renderGame(balls, bricks, striker0, striker1);
+    //renderGame(balls, bricks, striker0, striker1);
     lcdCleanScreen(buffer);
-   // memset(buffer,0xAA,512);
+    //memset(buffer,0xAA,512);
     //lcd_push_buffer(buffer);
 
     while(1)
@@ -102,15 +102,15 @@ int main(void)
             t1.flag = 0;
         }
 
-        if(physicsCount > 1){//10000-speed*10){s
+        if(physicsCount > 12/(speed+1)){
             updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
             physicsCount = 0;
         }
 
         if(renderCount > 20){//10000){
-            renderGame(balls, bricks, striker0, striker1);
+            //renderGame(balls, bricks, striker0, striker1);
             lcdCleanScreen(buffer);
-            lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer);
+            lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer, &lives, &score);
             //lcd_push_buffer(buffer);
             //updateRender();
             renderCount = 0;

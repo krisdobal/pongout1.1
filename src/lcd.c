@@ -60,7 +60,7 @@ void lcdRenderBricks(uint32_t * bricks_p, uint8_t * buffer_p){
 }
 
 //TODO : Actual life and score data
-void renderDecorations(uint8_t * buffer_p){
+void renderDecorations(uint8_t * buffer_p,  uint8_t * lives_p, uint16_t * score_p){
     //Draw the border
     for(int i=0; i<128; i++){
         buffer_p[i]     |= 0x01; //Top
@@ -73,16 +73,61 @@ void renderDecorations(uint8_t * buffer_p){
         buffer_p[(128*i) + 127] |= 0xFF;  //Right edge
     }
 
-    //Lives (example values)
-    lcdRenderChar(1,3,0x6D, buffer_p);
-    lcdRenderChar(122,3,0x6B, buffer_p);
+    //Setting the char for the lives
+    uint8_t lives0Char, lives1Char;
+    switch (*lives_p & 0x0F){
+        case 0x00 :
+            lives0Char = 0x6A;
+        break;
+        case 0x01 :
+            lives0Char = 0x6B;
+        break;
+        case 0x02 :
+            lives0Char = 0x6C;
+        break;
+        case 0x03 :
+            lives0Char = 0x6D;
+        break;
+        default :
+            lives0Char = 0x8D;
+    }
+    switch (*lives_p  >> 4){
+        case 0x00 :
+            lives1Char = 0x6A;
+        break;
+        case 0x01 :
+            lives1Char = 0x6B;
+        break;
+        case 0x02 :
+            lives1Char = 0x6C;
+        break;
+        case 0x03 :
+            lives1Char = 0x6D;
+        break;
+        default :
+            lives1Char = 0x8D;
+
+    }
+    //Lives
+    lcdRenderChar(1,3,lives0Char, buffer_p); // Can be implemented without the switch as 0x6A + (*lives_p & 0x0F)
+    lcdRenderChar(122,3,lives1Char, buffer_p);
+
+/*
+    //Setting the char for score
+    uint8_t score0Onechar, score0TenChar, score1Onechar, score1TenChar;
+    switch (*score_p & 0x000F){
+        case 0x0000 :
+            score0Onechar = ;
+        break;
+    }
+*/
 
     //Scores (blank values)
-    lcdRenderChar(1,0,0x5F,buffer_p);
-    lcdRenderChar(1,1,0x5F,buffer_p);
+    lcdRenderChar(1,0,0x60 + ((* score_p & 0x00FF)/0x000A) ,buffer_p);
+    lcdRenderChar(1,1,0x60 + ((* score_p & 0x000F)%0x000A) ,buffer_p);
     lcdRenderChar(1,2,0x5F,buffer_p);
-    lcdRenderChar(122,0,0x5F,buffer_p);
-    lcdRenderChar(122,1,0x5F,buffer_p);
+    lcdRenderChar(122,0,0x60 + (((* score_p & 0xFF00)>>8)/0x000A),buffer_p);
+    lcdRenderChar(122,1,0x60 + (((* score_p & 0xFF00)>>8)%0x000A),buffer_p);
     lcdRenderChar(122,2,0x5F,buffer_p);
 
 
@@ -140,11 +185,11 @@ void lcdRenderBalls(ball_t * balls, uint8_t * activeBalls, uint8_t * buffer){
     }
 }
 
-void lcdRenderGame(ball_t * balls_p, uint8_t * activeBalls_p, uint32_t * striker0_p, uint32_t * striker1_p, uint32_t * bricks_p, uint8_t * buffer_p){
+void lcdRenderGame(ball_t * balls_p, uint8_t * activeBalls_p, uint32_t * striker0_p, uint32_t * striker1_p, uint32_t * bricks_p, uint8_t * buffer_p, uint8_t * lives_p, uint16_t * score_p){
     // Bricks rendered before decorations
     // Because bricks can overlap with the border
     lcdRenderBricks(bricks_p, buffer_p);
-    renderDecorations(buffer_p); //TODO : scores and lives
+    renderDecorations(buffer_p, lives_p, score_p); //TODO : scores and lives
     lcdRenderStrikers(striker0_p, striker1_p, buffer_p);
     lcdRenderBalls(balls_p, activeBalls_p, buffer_p);
 
