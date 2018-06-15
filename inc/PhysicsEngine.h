@@ -17,11 +17,11 @@
  //Ball struct containing position and velocity
 typedef struct {
     // 18.14
-    uint32_t xpos;
-    uint32_t ypos;
-    uint32_t xv;
-    uint32_t yv;
-    uint32_t v; // magnitude of velocity
+    int32_t xpos;
+    int32_t ypos;
+    int32_t xv;
+    int32_t yv;
+    int32_t v; // magnitude of velocity
 
     uint8_t lastStriker; // the first bit indicates the striker that last hit the ball
     uint16_t angle;

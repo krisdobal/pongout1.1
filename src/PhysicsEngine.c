@@ -8,7 +8,7 @@
 
 // general one-dimensional reflect function taking moving object position and
 // velocity plus statical object position.
-void reflect(uint32_t * pos_p, int wall, uint32_t * v_p){
+void reflect(int32_t * pos_p, int wall, int32_t * v_p){
     //This function assumes good input.
     //All checks must be made before calling it.
     *pos_p = (wall << 1) - *v_p - *pos_p;
@@ -65,7 +65,7 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
                 ball_p->angle = (ball_p->angle + 256)%512;
             }
             // reflects angle in the x-axis if previous yv and new yv have different signs
-            if (XOR2(ball_p->angle < 256, ball_p->yv < 0xefffffff)){
+            if (XOR2(ball_p->angle < 256, ball_p->yv > 0)){
                 ball_p->angle = (512 - ball_p->angle)%512;
             }
 
@@ -123,9 +123,10 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
             if (!ball_p->lastStriker) {
                 ball_p->angle = (ball_p->angle + 256)%512;
             }
-            if (XOR2(ball_p -> angle < 256, ball_p->yv > 0)){
+            if (XOR2(ball_p->angle < 256, ball_p->yv > 0)){
                 ball_p->angle = (512 - ball_p->angle)%512;
             }
+
 	    //update position of the ball. xv will be overwritten later
             reflect(&ball_p->xpos, 119 << 14, &ball_p->xv);
 	    ball_p->ypos = nextY;
