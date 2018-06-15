@@ -32,6 +32,8 @@ Note:
 1. The ASCII character 0x20 is "SPACE" or a blank.
 2. The ASCII character 0x7F(DEL) is not supported by the matrix below.
 
+IMPORTANT : Values listed above to be offset by -0x20 when calling!
+
 */
 
 #ifndef _CHARSET_H_
