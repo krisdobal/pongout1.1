@@ -4,9 +4,9 @@
 #include "PhysicsEngine.h"
 #include "30010_io.h"
 
-void lcdRenderChar(int slice, uint8_t line, char c, uint8_t * buffer_p){
+void lcdRenderChar(int slice, uint8_t line, uint8_t c, uint8_t * buffer_p){//char c, uint8_t * buffer_p){
     for(int i=0; i<5; i++){
-        buffer_p[slice+(128*line)+1] = character_data[c][i];
+        buffer_p[slice+(128*line)+i] = character_data[c][i];
     }
 }
 
@@ -33,7 +33,7 @@ void lcdRenderBricks(uint32_t * bricks_p, uint8_t * buffer_p){
     int i, j;
 
     //Render each buffer line
-    for(i=0; i<4; i++){ 
+    for(i=0; i<4; i++){
         //Each brick
         for(j=0; j<32; j++){
             //Finds the value to go into the postition in the array
@@ -68,16 +68,16 @@ void renderDecorations(uint8_t * buffer_p){
     }
 
     //Lives (example values)
-    lcdRenderChar(1,3,0x8D, buffer_p);
-    lcdRenderChar(122,3,0x8C, buffer_p);
+    lcdRenderChar(1,3,0x6D, buffer_p);
+    lcdRenderChar(122,3,0x6C, buffer_p);
 
     //Scores (blank values)
-    lcdRenderChar(1,0,0x7F,buffer_p);
-    lcdRenderChar(1,1,0x7F,buffer_p);
-    lcdRenderChar(1,2,0x7F,buffer_p);
-    lcdRenderChar(122,0,0x7F,buffer_p);
-    lcdRenderChar(122,1,0x7F,buffer_p);
-    lcdRenderChar(122,2,0x7F,buffer_p);
+    lcdRenderChar(1,0,0x5F,buffer_p);
+    lcdRenderChar(1,1,0x5F,buffer_p);
+    lcdRenderChar(1,2,0x5F,buffer_p);
+    lcdRenderChar(122,0,0x5F,buffer_p);
+    lcdRenderChar(122,1,0x5F,buffer_p);
+    lcdRenderChar(122,2,0x5F,buffer_p);
 
 
 }
@@ -129,7 +129,7 @@ void lcdRenderBalls(ball_t * balls, uint8_t * activeBalls, uint8_t * buffer){
         if((0x01<<i) & * activeBalls){
             x = balls[i].xpos>>14;
             y = balls[i].ypos>>14;
-            buffer[x+y*16] |= (y % 8);
+            buffer[x + ((y>>3)<<7)] |= (0x01<<(y % 8));
         }
     }
 }
