@@ -6,22 +6,15 @@ int newMain(void)
   // Show start screen  
   while(1) {
       //Show main menu
-      uint8_t option = 0;
-      uint8_t numberOfOptions = 3;
-      uint8_t newPress = 1;
-      uint8_t stillDeciding = 0;
+      char * mainOption0 = "change level"
+      char * mainOption1 = "change speed"
+      char * mainOption2 = "help"
+      char * mainOption3 = "PLAY"
       
-      while(stillDeciding) {
-          if (!pressed) {
-              if (readJoystick() & 0x01 << 0) {
-                  option = (option + 1) % numberOfOptions;
-              }
-              else if (readJoystick() & 0x01 << 0) {
-                  option = (option + numberOfOptions - 1) % numberOfOptions;
-              }
-              else if (
-          }
-      }
+      uint8_t nextAction = menu(mainOption0, mainOption1, mainOption2, mainOption3);
+      switch (nextAction) {
+          case 1 : 
+      
   }
 }
 
