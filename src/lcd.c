@@ -33,7 +33,7 @@ void lcdRenderBricks(uint32_t * bricks_p, uint8_t * buffer_p){
     int i, j;
 
     //Render each buffer line
-    for(i=0; i<4; i++){ //
+    for(i=0; i<4; i++){ 
         //Each brick
         for(j=0; j<32; j++){
             //Finds the value to go into the postition in the array
@@ -57,8 +57,8 @@ void lcdRenderBricks(uint32_t * bricks_p, uint8_t * buffer_p){
 void renderDecorations(uint8_t * buffer_p){
     //Draw the border
     for(int i=0; i<128; i++){
-        buffer_p[i]     |= 0x80; //Top
-        buffer_p[384+i] |= 0x01; //Bottom
+        buffer_p[i]     |= 0x01; //Top
+        buffer_p[384+i] |= 0x80; //Bottom
     }
     for(int i=0; i<4; i++){
         buffer_p[128*i]         |= 0xFF;  //Left edge
