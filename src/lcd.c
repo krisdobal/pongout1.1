@@ -122,9 +122,9 @@ void renderDecorations(uint8_t * buffer_p,  uint8_t * lives_p, uint16_t * score_
     }
 */
 
-    //Scores (blank values)
+    //Scores
     lcdRenderChar(1,0,0x60 + ((* score_p & 0x00FF)/0x000A) ,buffer_p);
-    lcdRenderChar(1,1,0x60 + ((* score_p & 0x000F)%0x000A) ,buffer_p);
+    lcdRenderChar(1,1,0x60 + ((* score_p & 0x00FF)%0x000A) ,buffer_p);
     lcdRenderChar(1,2,0x5F,buffer_p);
     lcdRenderChar(122,0,0x60 + (((* score_p & 0xFF00)>>8)/0x000A),buffer_p);
     lcdRenderChar(122,1,0x60 + (((* score_p & 0xFF00)>>8)%0x000A),buffer_p);
