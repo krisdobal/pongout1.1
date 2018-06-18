@@ -279,24 +279,31 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 } // End brickCollision
 
 //Adds a new ball. Only called when there are no balls.
-void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){
+void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // don't know if striker0_p is nessecary
     // TODO
     // Always spawns at player 0, BUT IT's Just a dummy pointer to position 0
     // Always spawns ball 0
+    int i;
+    for(i=0; i<8;i++){
+        if(~(*activeBalls) & (0x01<<i)){
+            break;
+        }
+    }
+    //now the i value is at a position where there is an inactive ball
 
     //Coords in 18:14
-    ball_p->xpos = 20 <<14; // 9 <<14;
-    ball_p->ypos = 16 << 14; // *striker0_p + (3<<14);
-    ball_p->angle = 257;
-    ball_p->v = 1 << 12;
-    ball_p->xv = FIX14MULT(ball_p->v, fix14cos(ball_p->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
-    ball_p->yv = FIX14MULT(ball_p->v, fix14sin(ball_p->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
+    (ball_p+i)->xpos = 20 <<14; // 9 <<14;
+    (ball_p+i)->ypos = 16 << 14; // *striker0_p + (3<<14);
+    (ball_p+i)->angle = 257;
+    (ball_p+i)->v = 1 << 12;
+    (ball_p+i)->xv = FIX14MULT((ball_p+i)->v, fix14cos((ball_p+i)->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
+    (ball_p+i)->yv = FIX14MULT((ball_p+i)->v, fix14sin((ball_p+i)->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 
-    ball_p->lastStriker = 2;//0;
+    (ball_p+i)->lastStriker = 2;//0;
 
 
     //Activate ball 0
-    * activeBalls |= 0x01;
+    * activeBalls |= (0x01<<i);
 }
 
 
@@ -326,7 +333,9 @@ void updatePhysics(ball_t * ball_p, uint8_t * activeBalls_p, uint32_t * striker0
         else moveBall(&ball_p[i]);
         noBalls = 0; //There are balls! Hooray!
     }
-    if(noBalls){
+    if(* activeBalls_p == 0x00){
         newBall(ball_p, activeBalls_p, striker0_p);
+    }else if(readJoystick()){
+        newBall(ball_p, activeBalls_p,striker0_p);
     }
 }
