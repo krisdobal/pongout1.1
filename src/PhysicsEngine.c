@@ -84,19 +84,19 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
             //check where it hits and adjust angle accordingly.
 
             if (nextY < (* striker0_p) + (1 << 14)){
-                ball_p->angle = (512 + ball_p->angle -(((512 + ball_p->angle - 384)%512) /2))%512;
+                ball_p->angle = (512 + ball_p->angle -(((512 + ball_p->angle - 384)%512)*2/3))%512;
  //               ball_p->angle += ((128 - ball_p->angle) >> 1);
             }
             else if (nextY < (* striker0_p) + (2 << 14)){
-                ball_p->angle = (512 + ball_p->angle -(((512 + ball_p->angle - 384)%512) >> 2))%512;
+                ball_p->angle = (512 + ball_p->angle -(((512 + ball_p->angle - 384)%512)/3))%512;
 //                ball_p->angle += (127 - ball_p->angle) >> 2;
             }
             else if (nextY < (* striker0_p) + (4 << 14)){}
             else if (nextY < (* striker0_p) + (5 << 14)){
-                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512) >> 2))%512;
+                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)/3))%512;
             }
             else { // if (nextY >= (* striker0) + (5 << 14) && nextY < * striker0 + (6 << 14)) {
-                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512) >> 1))%512;
+                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)*2/3)%512;
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
