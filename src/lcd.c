@@ -159,7 +159,7 @@ void lcdRenderStrikers(uint32_t *striker0, uint32_t *striker1, uint8_t * buffer)
 
 }
 
-void lcdRenderBalls(ball_t * balls, uint8_t * activeBalls, uint8_t * buffer){
+void lcdRenderBalls(ball_t * balls_p, uint8_t * activeBalls_p, uint8_t * buffer_p){
     /*
     //Macros for readability
     #define X (balls[i].xpos>>14)
@@ -177,10 +177,10 @@ void lcdRenderBalls(ball_t * balls, uint8_t * activeBalls, uint8_t * buffer){
     */
     int i, x, y;
     for(i=0; i<8;i++){
-        if((0x01<<i) & * activeBalls){
-            x = balls[i].xpos>>14;
-            y = balls[i].ypos>>14;
-            buffer[x + ((y>>3)<<7)] |= (0x01<<(y % 8));
+        if((0x01<<i) & * activeBalls_p){
+            x = balls_p[i].xpos>>14;
+            y = balls_p[i].ypos>>14;
+            buffer_p[x + ((y>>3)<<7)] |= (0x01<<(y % 8));
         }
     }
 }
