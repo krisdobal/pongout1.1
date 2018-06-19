@@ -295,7 +295,7 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // 
     (ball_p+i)->xpos = 20 <<14; // 9 <<14;
     (ball_p+i)->ypos = 16 << 14; // *striker0_p + (3<<14);
     (ball_p+i)->angle = 257;
-    (ball_p+i)->v = 1 << 12;
+    (ball_p+i)->v = 1 << 9;
     (ball_p+i)->xv = FIX14MULT((ball_p+i)->v, fix14cos((ball_p+i)->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
     (ball_p+i)->yv = FIX14MULT((ball_p+i)->v, fix14sin((ball_p+i)->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 
@@ -310,7 +310,7 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // 
 void updateStrikers(uint32_t * striker0_p, uint32_t * striker1_p) {
 	//transform potmetervalue to coordinate range of strikers
 	*striker0_p = (1 << 14) + (readPot0()*(24 << 14))/4070;
-	*striker1_p = (1 << 14) + (readPot1()*(24 << 14))/4070;
+	*striker1_p = (1 << 14) + ((4070-readPot1())*(24 << 14))/4070;
 }
 
 

@@ -52,7 +52,7 @@ int main(void)
     //Initializing hardware setup
                                         // To be put in main
     init_usb_uart(115200);
-    startTimer1(100);
+    startTimer1(3000);
     initPots();
     initializeJoystick();
     init_spi_lcd();
@@ -97,6 +97,7 @@ int main(void)
     hideCursor();
     //renderGame(balls, bricks, striker0, striker1);
     lcdCleanScreen(buffer);
+
     //memset(buffer,0xAA,512);
     //lcd_push_buffer(buffer);
 
@@ -115,7 +116,7 @@ int main(void)
             physicsCount = 0;
         }
 
-        if(renderCount > 20){//10000){
+        if(renderCount > 50){//10000){
             //renderGame(balls, bricks, striker0, striker1);// rendering for PuTTY
             lcdCleanScreen(buffer);
             lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer, &lives, &score);
