@@ -96,7 +96,7 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
                 ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)/3))%512;
             }
             else { // if (nextY >= (* striker0) + (5 << 14) && nextY < * striker0 + (6 << 14)) {
-                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)*2/3)%512;
+                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)*2/3))%512;
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
@@ -282,7 +282,6 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // don't know if striker0_p is nessecary
     // TODO
     // Always spawns at player 0, BUT IT's Just a dummy pointer to position 0
-    // Always spawns ball 0
     int i;
     for(i=0; i<8;i++){
         if(~(*activeBalls) & (0x01<<i)){
@@ -292,10 +291,10 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // 
     //now the i value is at a position where there is an inactive ball
 
     //Coords in 18:14
-    (ball_p+i)->xpos = 20 <<14; // 9 <<14;
-    (ball_p+i)->ypos = 16 << 14; // *striker0_p + (3<<14);
+    (ball_p+i)->xpos = 11 <<14; //20 <<14; //
+    (ball_p+i)->ypos = *striker0_p + (3<<14); //16 << 14; //
     (ball_p+i)->angle = 257;
-    (ball_p+i)->v = 1 << 9;
+    (ball_p+i)->v = 1 << 10;
     (ball_p+i)->xv = FIX14MULT((ball_p+i)->v, fix14cos((ball_p+i)->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
     (ball_p+i)->yv = FIX14MULT((ball_p+i)->v, fix14sin((ball_p+i)->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 

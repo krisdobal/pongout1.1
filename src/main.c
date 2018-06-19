@@ -52,7 +52,7 @@ int main(void)
     //Initializing hardware setup
                                         // To be put in main
     init_usb_uart(115200);
-    startTimer1(3000);
+    startTimer1(1500);
     initPots();
     initializeJoystick();
     init_spi_lcd();
