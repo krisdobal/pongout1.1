@@ -9,6 +9,9 @@
 #include <string.h>
 #include "lcd.h"
 
+void helpScreen(uint8_t * buffer_p);
+void endScreen(uint32_t gameStats, uint8_t * buffer_p);
+
 int newMain(void) {
   
   //Initializing hardware
@@ -31,8 +34,8 @@ int newMain(void) {
       char * mainOption1 = "change speed";
       char * mainOption2 = "help";
       char * mainOption3 = "PLAY";
-      
-      uint8_t nextAction = menu(mainOption0, mainOption1, mainOption2, mainOption3);
+      uint8_t next_action = "
+      menu(mainOption0, mainOption1, mainOption2, mainOption3, buffer_p);
       
       switch (nextAction) {
           case 0 :
@@ -50,7 +53,7 @@ int newMain(void) {
               menu(levelOption0, levelOption1, levelOption2, levelOption3, &speed);
               break;
           case 2 : 
-              helpScreen();
+              helpScreen(buffer_p);
               break;
           case 3 : 
               endScreen(startGame(level, speed));
@@ -59,15 +62,15 @@ int newMain(void) {
   }
 }
 
-void menu(char * opt0, char * opt1, char * opt2, char * opt3, uint8_t * option_p) {
+void menu(char * opt0, char * opt1, char * opt2, char * opt3, uint8_t * option_p, uint8_t * buffer_p) {
   
     uint8_t pressed = 1;
     uint8_t stillDeciding = 1;
     
-    renderString(opt0, 0);
-    renderString(opt1, 1);
-    renderString(opt2, 2);
-    renderString(opt3, 3); 
+    renderString(0, 0, opt0, buffer_p);
+    renderString(0, 1, opt1, buffer_p);
+    renderString(0, 2, opt2, buffer_p);
+    renderString(0, 3, opt3, buffer_p); 
       
     while(stillDeciding) {
         if (!pressed) {
@@ -83,10 +86,26 @@ void menu(char * opt0, char * opt1, char * opt2, char * opt3, uint8_t * option_p
                 stillDeciding = 0;
                 pressed = 1;
             }
-            renderArrow(option);
+            renderArrow(option, buffer_p);
         }
         else if (!(readJoystick() & 0x0F) {
             pressed = 0;
         }
     }
 }
+                 
+void helpScreen(uint8_t * buffer_p) {
+    lcdRenderHelpScreen(buffer_p);
+    while(!(readJoystick() & 0x01 << 3)) {}
+}
+                 
+void endScreen(uint32_t gameStats, uint8_t * buffer_p) {
+    lcdRenderString(20, 1, "...and the winner is:", buffer_p);
+    if (gameStats & 0x02) {
+        lcdRenderString(20, 2, "Player 0", buffer_p);
+    }
+    else {
+        lcdRenderString(20, 2, "Player 1", buffer_p);
+    }
+}
+  

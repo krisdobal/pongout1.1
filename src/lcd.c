@@ -192,6 +192,15 @@ void lcdRenderGame(ball_t * balls_p, uint8_t * activeBalls_p, uint32_t * striker
     renderDecorations(buffer_p, lives_p, score_p); //TODO : scores and lives
     lcdRenderStrikers(striker0_p, striker1_p, buffer_p);
     lcdRenderBalls(balls_p, activeBalls_p, buffer_p);
-
     lcd_push_buffer(buffer_p);
 }
+
+void lcdRenderHelpScreen(int * buffer_p) {
+    lcdRenderString(1, 0, "Last survivor wins. If  ", buffer_p);
+    lcdRenderString(1, 1, "all bricks are gone, the", buffer_p);
+    lcdRenderString(1, 2, "player with the most    ", buffer_p);
+    lcdRenderString(1, 3, "points wins.       EXIT ", buffer_p);
+    lcdRenderArrow(3, buffer_p);
+    lcd_push_buffer(buffer_p);
+}
+
