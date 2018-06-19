@@ -2,6 +2,7 @@
 #define _joystick_H_
 
 void initializeJoystick();
+void initializeJoystickIRQ();
 uint8_t readJoystick();
 
 

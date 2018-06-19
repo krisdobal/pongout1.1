@@ -11,6 +11,16 @@ void lcdRenderChar(int slice, uint8_t line, uint8_t c, uint8_t * buffer_p){//cha
     }
 }
 
+void lcdRenderArrow(uint8_t line, uint8_t * buffer_p){//char c, uint8_t * buffer_p){
+    for(int i=0; i<4; i++){
+        if(i == line){
+            lcdRenderChar(128-5,i,0x1E, buffer_p);
+        } else{
+            lcdRenderChar(128-5,i,0, buffer_p);
+        }
+    }
+}
+
 void lcdRenderString(int slice, uint8_t line, uint8_t * string_p, uint8_t * buffer_p){
     int i = 0;
     int l = strlen(string_p);

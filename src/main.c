@@ -31,6 +31,11 @@
 #include <string.h>
 #include "lcd.h"
 
+void EXTI1_IRQHandler(void) {
+    while (readJoystick() & (0x01 << 2)) {}
+    EXTI->PR |= EXTI_PR_PR1;
+}
+
 void loadLevel(uint8_t * levelSelect_p, uint32_t * bricks_p, uint32_t * specialBricks_p){
     int i;
     switch(* levelSelect_p){
@@ -63,11 +68,12 @@ int main(void)
     startTimer1(1500);
     initPots();
     initializeJoystick();
+    initializeJoystickIRQ();
     init_spi_lcd();
     //initializeLed();
 
     //Variables to be referenced from main
-    uint8_t chosenLevel = 0;
+    uint8_t chosenLevel = 1;
     uint8_t chosenSpeed = 3; // value from upper main from 0, to 3 where 3 is fastest
 
     //Initialize game variables

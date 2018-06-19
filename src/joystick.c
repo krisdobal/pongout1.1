@@ -16,11 +16,33 @@
 
 
 
+void initializeJoystickIRQ(){
+    //PC1
+
+    //Enable clock
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
+    RCC->AHBENR |= RCC_AHBPeriph_GPIOC; // Enable clock for GPIO Port C
+
+    //
+    SYSCFG->EXTICR[0] &= ~SYSCFG_EXTICR1_EXTI1;
+    SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI1_PC;
+
+    //
+    EXTI->IMR |= EXTI_IMR_MR1;
+    EXTI->EMR &= ~EXTI_EMR_MR1;
+    EXTI->RTSR |= EXTI_RTSR_TR1;
+    EXTI->FTSR &= ~EXTI_FTSR_TR1;
+
+    //
+    NVIC_SetPriority(EXTI1_IRQn, 1); //set interrupt to highest priority
+    NVIC_EnableIRQ(EXTI1_IRQn); //enable the interrupt handler
+}
+
 void initializeJoystick(){
     RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
     RCC->AHBENR |= RCC_AHBPeriph_GPIOB; // Enable clock for GPIO Port B
     RCC->AHBENR |= RCC_AHBPeriph_GPIOC; // Enable clock for GPIO Port C
-    RCC->APB2ENR |= 0x0001; // Enable clock for SYSGFC (joystick interrupt)
+//    RCC->APB2ENR |= 0x0001; // Enable clock for SYSGFC (joystick interrupt)
 
 // Set pin PA4 /joystickup   to input
     GPIOA->MODER &= ~(0x00000003 << (4 * 2)); // Clear mode register
@@ -35,17 +57,18 @@ void initializeJoystick(){
     GPIOB->PUPDR |= (0x00000002 << (0 * 2)); // Set push/pull register (0x00 -No pull, 0x01 - Pull-up, 0x02 - Pull-down)
 
 // Set pin PB5 /joystick center to interrupt
-   
+
     GPIOB->MODER &= ~(0x00000003 << (5 * 2)); // Clear mode register
     GPIOB->MODER |= (0x00000000 << (5 * 2)); // Set mode register (0x00 - Input, 0x01 - Output, 0x02 - Alternate Function, 0x03 - Analog in/out)
     GPIOB->PUPDR &= ~(0x00000003 << (5 * 2)); // Clear push/pull register
     GPIOB->PUPDR |= (0x00000002 << (5 * 2)); // Set push/pull register (0x00 -No pull, 0x01 - Pull-up, 0x02 - Pull-down)
-   
-    SYSCFG->EXTICR2 |= 0x0001 << (2 * 4); // connect PB5 (center) to exti5
-    SYSCFG->EXTI_IMR1 |= 0x0001 << (2 * 5); // unmask interrupt line 5
-    SYSCFG->EXTI_RTSR1 |= 0x0001 << (2 * 5); // send interrupt of line 5 to rising edge
-    NVIC_SetPriority(EXTI5_IRQn), 1); //set interrupt to highest priority
-    NVIC_EnableIRQ(EXTI5_IRQn); //enable the interrupt handler
+
+//    SYSCFG->EXTICR[1] |= 0x1 << (4); // connect PB5 (center) to exti5
+//    EXTI->IMR |= 0x0001 << (5); // unmask interrupt line 5
+//    EXTI->RTSR |= 0x0001 << (5); // send interrupt of line 5 to rising edge
+//
+//    NVIC_SetPriority(EXTI5_IRQn), 1); //set interrupt to highest priority
+//    NVIC_EnableIRQ(EXTI5_IRQn); //enable the interrupt handler
 
 // Set pin PC0 /joystickright to input
     GPIOC->MODER &= ~(0x00000003 << (0 * 2)); // Clear mode register
@@ -91,7 +114,3 @@ uint8_t readJoystick(){
     } else output &= ~(0x01 << 4);
     return output;
 }
-
-void EXTI5_IRQhandler(void) {
-    while (readJoystick() & 0x01 << (2 * 4)) {}
-}        
