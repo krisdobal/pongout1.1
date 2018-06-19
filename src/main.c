@@ -31,17 +31,25 @@
 #include <string.h>
 #include "lcd.h"
 
-void loadLevel(uint8_t * levelSelect_p, uint32_t * bricks_p){
+void loadLevel(uint8_t * levelSelect_p, uint32_t * bricks_p, uint32_t * specialBricks_p){
     int i;
     switch(* levelSelect_p){
         case 1 :
             for(i=0;i<8;i++){
                 bricks_p[i] = level1[i];
+                specialBricks_p[i] = special1[i];
+            }
+            break;
+        case 2 :
+            for(i=0;i<8;i++){
+                bricks_p[i] = level2[i];
+                specialBricks_p[i] = special2[i];
             }
             break;
         default :
             for(i=0;i<8;i++){
                 bricks_p[i] = defaultLevel[i];
+                specialBricks_p[i] = defaultSpecial[i];
             }
 
     }
@@ -52,7 +60,7 @@ int main(void)
     //Initializing hardware setup
                                         // To be put in main
     init_usb_uart(115200);
-    startTimer1(100);
+    startTimer1(1500);
     initPots();
     initializeJoystick();
     init_spi_lcd();
@@ -70,6 +78,7 @@ int main(void)
     uint8_t activeBalls = 0x00;
     ball_t balls[8];
     uint32_t bricks[8];
+    uint32_t specialBricks[8];
 
     //game statistics
     uint16_t score = 0x0000;
@@ -87,7 +96,7 @@ int main(void)
 
     // striker initial position
     updateStrikers(&striker0, &striker1);
-    loadLevel(&chosenLevel, bricks);//0: default
+    loadLevel(&chosenLevel, bricks, specialBricks);//0: default
 
     newBall(&balls[0],&activeBalls,&striker0);
     //Initiate ball 1
@@ -97,6 +106,7 @@ int main(void)
     hideCursor();
     //renderGame(balls, bricks, striker0, striker1);
     lcdCleanScreen(buffer);
+
     //memset(buffer,0xAA,512);
     //lcd_push_buffer(buffer);
 
@@ -111,14 +121,14 @@ int main(void)
         }
 
         if(physicsCount > 10-(chosenSpeed*3)){
-            updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks);
+            updatePhysics(balls, &activeBalls, &striker0, &striker1, &lives, &score, bricks, specialBricks);
             physicsCount = 0;
         }
 
-        if(renderCount > 20){//10000){
+        if(renderCount > 50){//10000){
             //renderGame(balls, bricks, striker0, striker1);// rendering for PuTTY
             lcdCleanScreen(buffer);
-            lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer, &lives, &score);
+            lcdRenderGame(balls, &activeBalls, &striker0, &striker1, bricks, buffer, &lives, &score); //, specialBricks
             //lcd_push_buffer(buffer);
             //updateRender();
             renderCount = 0;
@@ -131,7 +141,7 @@ int main(void)
                 break;
             }
         }
-        if(i == 8){
+        if(i == 8 && chosenLevel){ // if all bricks are gone and we are not in level0
             gameStats += score << 16;
             gameStats += (0x0001 << 0); // game outcome - all bricks destroyed, winner determined on score
             if(score)

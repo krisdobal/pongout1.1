@@ -96,7 +96,7 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
                 ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)/3))%512;
             }
             else { // if (nextY >= (* striker0) + (5 << 14) && nextY < * striker0 + (6 << 14)) {
-                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)*2/3)%512;
+                ball_p->angle = (ball_p->angle + (((512 + 128 - ball_p->angle)%512)*2/3))%512;
             }
             //adjust velocity vector according to new angle.
             // uint32_t fixcos = fix14cos(ball_p->angle);
@@ -165,7 +165,7 @@ uint8_t strikerCollision(ball_t * ball_p, uint32_t * striker0_p, uint32_t * stri
 }
 
 
-uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
+uint8_t brickCollision(ball_t * ball_p, ball_t * ballArray_p, uint8_t * activeBalls_p, uint16_t * score, uint32_t * bricks, uint32_t * specialBricks_p, uint32_t * striker0_p){
 
     // TODO:
     // Special bricks not implemented
@@ -230,6 +230,12 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
                 // Hitting right edge of brick:
                 reflect(&ball_p->xpos, (oldx>>14)<<14, &ball_p->xv);
             }
+
+            //Special brick hit?!
+            if(specialBricks_p[iy] & decoded_x){
+                newBall(ballArray_p, activeBalls_p, striker0_p);
+            }
+
             //Flip the bit
             bricks[iy] ^= decoded_x;
             // update the score of the hitting player
@@ -282,8 +288,10 @@ uint8_t brickCollision(ball_t * ball_p, uint16_t * score, uint32_t * bricks){
 void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // don't know if striker0_p is nessecary
     // TODO
     // Always spawns at player 0, BUT IT's Just a dummy pointer to position 0
-    // Always spawns ball 0
     int i;
+    if(*activeBalls == 0xFF){
+        return;
+    }
     for(i=0; i<8;i++){
         if(~(*activeBalls) & (0x01<<i)){
             break;
@@ -292,10 +300,10 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // 
     //now the i value is at a position where there is an inactive ball
 
     //Coords in 18:14
-    (ball_p+i)->xpos = 20 <<14; // 9 <<14;
-    (ball_p+i)->ypos = 16 << 14; // *striker0_p + (3<<14);
+    (ball_p+i)->xpos = 11 <<14; //20 <<14; //
+    (ball_p+i)->ypos = *striker0_p + (3<<14); //16 << 14; //
     (ball_p+i)->angle = 257;
-    (ball_p+i)->v = 1 << 12;
+    (ball_p+i)->v = 1 << 10;
     (ball_p+i)->xv = FIX14MULT((ball_p+i)->v, fix14cos((ball_p+i)->angle)); //other options: fix14cos(ball_p->angle);// reduced vector to 1/2^5
     (ball_p+i)->yv = FIX14MULT((ball_p+i)->v, fix14sin((ball_p+i)->angle)); //other less good options fix14sin(ball_p->angle);// reduced vector to 1/2^5
 
@@ -310,16 +318,14 @@ void newBall(ball_t * ball_p, uint8_t * activeBalls, uint32_t * striker0_p){ // 
 void updateStrikers(uint32_t * striker0_p, uint32_t * striker1_p) {
 	//transform potmetervalue to coordinate range of strikers
 	*striker0_p = (1 << 14) + (readPot0()*(24 << 14))/4070;
-	*striker1_p = (1 << 14) + (readPot1()*(24 << 14))/4070;
+	*striker1_p = (1 << 14) + ((4070-readPot1())*(24 << 14))/4070;
 }
 
 
 //Checks all collisions, updates accordingly.
 // For one ball only.
-void updatePhysics(ball_t * ball_p, uint8_t * activeBalls_p, uint32_t * striker0_p, uint32_t * striker1_p, uint8_t * lives_p, uint16_t * score_p, uint32_t * bricks_p){
+void updatePhysics(ball_t * ball_p, uint8_t * activeBalls_p, uint32_t * striker0_p, uint32_t * striker1_p, uint8_t * lives_p, uint16_t * score_p, uint32_t * bricks_p, uint32_t * specialBricks_p){
 
-    //Assumes no balls
-    uint8_t noBalls = 1;
     uint8_t i;
 
     updateStrikers(striker0_p, striker1_p);
@@ -329,9 +335,9 @@ void updatePhysics(ball_t * ball_p, uint8_t * activeBalls_p, uint32_t * striker0
         if(wallCollision(&ball_p[i])){}
         else if(endCollision(&ball_p[i], lives_p, activeBalls_p, i)){}
         else if(strikerCollision(&ball_p[i], striker0_p, striker1_p)){}
-        else if(brickCollision(&ball_p[i], score_p, bricks_p)){}
+        else if(brickCollision(&ball_p[i], ball_p, activeBalls_p, score_p, bricks_p, specialBricks_p, striker0_p)){}
+
         else moveBall(&ball_p[i]);
-        noBalls = 0; //There are balls! Hooray!
     }
     if(* activeBalls_p == 0x00){
         newBall(ball_p, activeBalls_p, striker0_p);
