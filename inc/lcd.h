@@ -8,5 +8,6 @@ void lcdRenderGame(ball_t * balls_p, uint8_t * activeBalls_p, uint32_t * striker
 
 void lcdCleanScreen(uint8_t * buffer_p);
 
+void lcdRenderHelpScreen(uint8_t * buffer_p);
 
 #endif /* _LCD_H_ */
