@@ -20,6 +20,7 @@ void initializeJoystick(){
     RCC->AHBENR |= RCC_AHBPeriph_GPIOA; // Enable clock for GPIO Port A
     RCC->AHBENR |= RCC_AHBPeriph_GPIOB; // Enable clock for GPIO Port B
     RCC->AHBENR |= RCC_AHBPeriph_GPIOC; // Enable clock for GPIO Port C
+    RCC->APB2ENR |= 0x0001; // Enable clock for SYSGFC (joystick interrupt)
 
 // Set pin PA4 /joystickup   to input
     GPIOA->MODER &= ~(0x00000003 << (4 * 2)); // Clear mode register
@@ -33,11 +34,18 @@ void initializeJoystick(){
     GPIOB->PUPDR &= ~(0x00000003 << (0 * 2)); // Clear push/pull register
     GPIOB->PUPDR |= (0x00000002 << (0 * 2)); // Set push/pull register (0x00 -No pull, 0x01 - Pull-up, 0x02 - Pull-down)
 
-// Set pin PB5 /joystickcenter to input
+// Set pin PB5 /joystick center to interrupt
+   
     GPIOB->MODER &= ~(0x00000003 << (5 * 2)); // Clear mode register
     GPIOB->MODER |= (0x00000000 << (5 * 2)); // Set mode register (0x00 - Input, 0x01 - Output, 0x02 - Alternate Function, 0x03 - Analog in/out)
     GPIOB->PUPDR &= ~(0x00000003 << (5 * 2)); // Clear push/pull register
     GPIOB->PUPDR |= (0x00000002 << (5 * 2)); // Set push/pull register (0x00 -No pull, 0x01 - Pull-up, 0x02 - Pull-down)
+   
+    SYSCFG->EXTICR2 |= 0x0001 << (2 * 4); // connect PB5 (center) to exti5
+    SYSCFG->EXTI_IMR1 |= 0x0001 << (2 * 5); // unmask interrupt line 5
+    SYSCFG->EXTI_RTSR1 |= 0x0001 << (2 * 5); // send interrupt of line 5 to rising edge
+    NVIC_SetPriority(EXTI5_IRQn), 1); //set interrupt to highest priority
+    NVIC_EnableIRQ(EXTI5_IRQn); //enable the interrupt handler
 
 // Set pin PC0 /joystickright to input
     GPIOC->MODER &= ~(0x00000003 << (0 * 2)); // Clear mode register
@@ -50,8 +58,6 @@ void initializeJoystick(){
     GPIOB->MODER |= (0x00000000 << (1 * 2)); // Set mode register (0x00 - Input, 0x01 - Output, 0x02 - Alternate Function, 0x03 - Analog in/out)
     GPIOB->PUPDR &= ~(0x00000003 << (1 * 2)); // Clear push/pull register
     GPIOB->PUPDR |= (0x00000002 << (1 * 2)); // Set push/pull register (0x00 -No pull, 0x01 - Pull-up, 0x02 - Pull-down)
-
-
 }
 
 uint8_t readJoystick(){
@@ -59,7 +65,7 @@ uint8_t readJoystick(){
     Bit 0:
     */
     uint8_t output = 0x00;
-    //viderefører registrene til program variabler
+    //passes register values to program variables
     uint16_t Aval = GPIOA->IDR & (0x0010);
     //GPIOA->ODR |= (0x0001 << 1); //Set pin PA1 to high
     uint16_t Bval = GPIOB->IDR & (0x0021);
@@ -85,3 +91,7 @@ uint8_t readJoystick(){
     } else output &= ~(0x01 << 4);
     return output;
 }
+
+void EXTI5_IRQhandler(void) {
+    while (readJoystick() & 0x01 << (2 * 4)) {}
+}        
